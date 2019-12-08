@@ -1,0 +1,59 @@
+const graph = {
+	"A": [["B",3], ["C", 6]],
+	"B": [["E",11], ["D",4], ["C",4]],
+	"C": [["D",8],["G", 11]],
+	E: [["H", 9]],
+	D: [["E",-4], ["F",5], ["G",2]],
+	F: [["H",1]],
+	G: [["H",2]],
+	H: []
+}
+
+
+
+function findShortestPath(s, e, graph){
+  let minWeight = {}
+  let minWeightPath = {}
+  for(let key in graph){
+    minWeight[key] = Infinity
+  }
+  minWeight[s] = 0
+  setMinWeightToAllNode(s,minWeight,graph,minWeightPath)
+  let result = createShortestPath(minWeightPath,s,e)
+console.log(result.join("->"))
+  return minWeight[e]
+}
+
+
+function setMinWeightToAllNode(s,minWeight,graph,minWeightPath){
+  let visited = {}
+  let queue = [s]
+    while(queue.length){
+      let node = queue.shift()
+      if(visited[node]) continue
+       visited[node] = true
+       for(let toNodeArr of graph[node]){
+          let toNode = toNodeArr[0]
+          let totalWeight = toNodeArr[1] + minWeight[node]
+          if(totalWeight < minWeight[toNode]){
+            minWeight[toNode] = totalWeight
+            minWeightPath[toNode] = node
+          }
+          queue.push(toNode)
+       }
+    }
+}
+
+
+function createShortestPath(pathTaken,s,e){
+  let result = []
+  let node = e
+  while(pathTaken[node]){
+    result.unshift(node)
+    node = pathTaken[node]
+  }
+  result.unshift(node)
+  return result
+}
+
+console.log(findShortestPath("A","H",graph))
