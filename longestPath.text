@@ -1,0 +1,54 @@
+const graph = {
+	"A": [["B",3], ["C", 6]],
+	"B": [["E",11], ["D",4], ["C",4]],
+	"C": [["D",8],["G", 11]],
+	E: [["H", 9]],
+	D: [["E",-4], ["F",5], ["G",2]],
+	F: [["H",1]],
+	G: [["H",2]],
+	H: []
+}
+
+function getLongestPath(s,e,graph){
+  let maxToNode = {}
+  let maxPath = {}
+  for(let node in graph){
+    maxToNode[node] = -Infinity
+  }
+  maxToNode[s] = 0
+  getMaxPathToAllNodes(s,maxToNode,graph,maxPath)
+  let result = createMaxPath(maxPath,s,e)
+  console.log(result.join("->"))
+  return maxToNode[e]
+}
+
+function getMaxPathToAllNodes(s,maxToNode,graph,maxPath){
+  let visited = {}
+  let queue = [s]
+  while(queue.length > 0){
+    let node = queue.shift()
+    if(visited[node]) continue
+    visited[node] = true
+    for(let toNodeArr of graph[node]){
+      let toNode = toNodeArr[0]
+      let totalWeight = toNodeArr[1] + maxToNode[node]
+      if(totalWeight > maxToNode[toNode]){
+        maxToNode[toNode] = totalWeight
+        maxPath[toNode] = node
+      }
+      queue.push(toNodeArr[0])
+    }
+  }
+}
+
+
+function createMaxPath(maxPath,s,e){
+  let result = []
+  let node = e
+  while(maxPath[node]){
+    result.unshift(node)
+    node = maxPath[node]
+  }
+  result.unshift(node)
+  return result
+}
